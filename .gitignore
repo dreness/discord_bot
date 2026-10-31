@@ -1,0 +1,6 @@
+*.bak
+__pycache__/
+.DS_Store
+.envrc
+rendered/
+local-state/

@@ -1,0 +1,21 @@
+# Copy to .envrc (gitignored) and fill in. Read by config.py; direnv is optional.
+# Fabric checkout the bot works in. Worktrees, Fabric-* siblings and Fabric-Samples sit next to it.
+export FABRIC_BOT_CHECKOUT="$HOME/src/Fabric"
+# GitHub account owning the fork (remote `fork`) and the bot's scoped token.
+export FABRIC_BOT_FORK_OWNER="your-github-login"
+# Commit email for the bot's commits.
+export FABRIC_BOT_COMMIT_EMAIL="you@example.com"
+# Optional. Defaults: Claude Code's /private/tmp/claude-<uid>, ~/.config/gh-fabric-bot, Claude Code's ~/.claude/sessions, and the Discord plugin's ~/.claude/channels/discord.
+# export FABRIC_BOT_TEMP_ROOT="/private/tmp/claude-501"
+# export FABRIC_BOT_GH_CONFIG_DIR="$HOME/.config/gh-fabric-bot"
+# export FABRIC_BOT_SESSION_REGISTRY="$HOME/.claude/sessions"
+# export FABRIC_BOT_DISCORD_STATE_DIR="$HOME/.claude/channels/discord"
+# Optional. Compile jobs shared by all of the bot's builds (default 10), and the guest's spacesd MCP endpoint and token file.
+# export FABRIC_BOT_BUILD_JOBS=10
+# export FABRIC_BOT_DRIVER_MCP_URL="http://127.0.0.1:3211/mcp"
+# export FABRIC_BOT_DRIVER_TOKEN_FILE="$HOME/.cua/spacesd/token"
+# Optional. The observer proxy (used only while healthy at launch) and its public CA.
+# export FABRIC_BOT_LLM_PROXY="http://127.0.0.1:8080"
+# export FABRIC_BOT_LLM_PROXY_CA="$HOME/.mitmproxy/mitmproxy-ca-cert.pem"
+# Optional. The quota relay.
+# export FABRIC_BOT_QUOTA_URL="http://127.0.0.1:8791/quota"
