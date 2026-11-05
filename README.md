@@ -16,8 +16,8 @@ How, in brief: allow/deny rules in `settings.json`; `guard.py`, a fail-closed Pr
 ## Trust model
 
 - The VM is the boundary. A mistake or a steered bot can damage the guest, which resetting the VM undoes. What it can still reach: its own Anthropic login, Discord bot token and GitHub token, the fork and gists on `{{FORK_OWNER}}`, public repos, and the internet over NAT. The guard keeps the bot from reading those credentials and limits what it does with them.
-- One or two allowlisted Discord users, authorized for tasks on Fabric and Satin. Allowlist changes happen only in the operator's terminal (`/discord:access`, denied to the bot).
-- Why `dontAsk`: the Discord plugin relays permission prompts to the allowlisted users' DMs, and the first answer wins. No client setting keeps prompts terminal-only. So nothing prompts, and the guard never answers `ask`. Operator-only actions happen in another session.
+- The operator by DM, plus a few allowlisted members of a Fabric server channel (an @mention is required there), all authorized for tasks on Fabric and Satin. Allowlist changes happen only in the operator's terminal (`/discord:access`, denied to the bot).
+- Why `dontAsk`: the Discord plugin relays permission prompts to the DM allowlist (the operator), and the first answer wins. No client setting keeps prompts terminal-only. So nothing prompts, and the guard never answers `ask`. Operator-only actions happen in another session.
 
 ## Expected work
 
