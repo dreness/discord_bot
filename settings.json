@@ -8,7 +8,8 @@
     "GIT_CONFIG_VALUE_0": "git@github.com:",
     "GIT_CONFIG_KEY_1": "url.https://github.com/.insteadOf",
     "GIT_CONFIG_VALUE_1": "ssh://git@github.com/",
-    "CLAUDE_CODE_HARBOR_KITE": "0"
+    "CLAUDE_CODE_HARBOR_KITE": "0",
+    "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1"
   },
   "permissions": {
     "defaultMode": "dontAsk",
@@ -308,6 +309,7 @@
       "Bash(gh gist list *)",
       "Bash(printenv CLAUDE_CODE_SESSION_ID)",
       "Bash({{QUOTA_COMMAND}})",
+      "Bash({{CONTEXT_COMMAND}})",
       "Bash({{CLEAR_COMMAND}} *)",
       "Bash({{JOBS_COMMAND}} start *)",
       "Bash({{JOBS_COMMAND}} finish *)",
@@ -437,6 +439,10 @@
     "additionalDirectories": [
       "{{SCRATCH_ROOT}}"
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python3 -I \"{{CONTEXT_COMMAND}}\" statusline"
   },
   "hooks": {
     "SessionStart": [

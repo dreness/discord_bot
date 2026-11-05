@@ -80,6 +80,9 @@ def values():
         # The quota relay, read by quota-status.py.
         "QUOTA_URL": raw.get("QUOTA_URL") or "http://127.0.0.1:8791/quota",
         "QUOTA_COMMAND": os.path.join(DIRECTORY, "quota-status.py"),
+        # Status line input per session, saved by context-status.py statusline.
+        "CONTEXT_COMMAND": os.path.join(DIRECTORY, "context-status.py"),
+        "CONTEXT_DIRECTORY": raw.get("CONTEXT_DIRECTORY") or os.path.join(RENDERED_DIRECTORY, "context"),
         # Run by the bot for `clear`: a fresh session once the current turn ends.
         "CLEAR_COMMAND": os.path.join(DIRECTORY, "session-restart.py"),
         # The Cua Volume mount and the requesters' preferences on it.

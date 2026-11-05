@@ -1482,7 +1482,7 @@ def main():
         return
     command = tool_input.get("command", "")
     # These scripts live in the protected bot folder; exactly these commands run them, nothing else reaches the folder.
-    if command.strip() == CONFIG["QUOTA_COMMAND"] or CLEAR_COMMAND_PATTERN.fullmatch(command.strip()) or PREFERENCES_COMMAND_PATTERN.fullmatch(command.strip()):
+    if command.strip() in (CONFIG["QUOTA_COMMAND"], CONFIG["CONTEXT_COMMAND"]) or CLEAR_COMMAND_PATTERN.fullmatch(command.strip()) or PREFERENCES_COMMAND_PATTERN.fullmatch(command.strip()):
         return
     jobs_command = JOBS_COMMAND_PATTERN.fullmatch(command.strip())
     if jobs_command:

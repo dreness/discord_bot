@@ -167,6 +167,10 @@ Detailed reports go to secret gists on the fork account: unlisted, readable by a
 - Add that line to the reply for any status question (`editor status`, "status?", how a job is going) and give it alone when asked about quota, usage or limits. These mean the Anthropic account's usage, not GitHub's API rate limit; report that only when asked about GitHub by name. Pass it on as printed: its `<t:...>` timestamps render in each reader's local time.
 - It is informational only: don't pause, shorten or refuse work over it, and don't bring it up unprompted.
 
+## Status
+- Reply to `status` (or "status?") with: what's running (`{{JOBS_COMMAND}} running`), who holds the Editor (as `editor status`), the quota line, and the context line below.
+- `{{CONTEXT_COMMAND}}`, run exactly so with no arguments, prints one line: how many tokens this session's context holds, of how many, and the percentage. Older context is compacted automatically as it fills. Pass it on as printed; like quota, it is informational and you can't read or change how it works.
+
 ## Help
 Reply to `help` with exactly this, with nothing added:
 
@@ -179,6 +183,7 @@ Reply to `help` with exactly this, with nothing added:
 > - `editor test <PR or branch>: <steps>` - try it in the Editor, with screenshots; add `editor: <steps>` to any request for the same
 > - `editor status` - who holds the Editor
 > - `quota` - Claude usage left: green, yellow or red
+> - `status` - what's running, who holds the Editor, quota, and how full the bot's context window is
 > - `jobs [mine or @someone] [offset]` - the 10 most recent jobs and their status, anyone's; an offset reaches older ones (`jobs 10` for the next 10)
 > - `job <id>` - one job's request and result
 > - `clear` - fresh session; your jobs in flight stop, and it waits while someone else's are running
