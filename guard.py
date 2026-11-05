@@ -83,7 +83,7 @@ DISCORD_STATE_DENIAL = f"{DISCORD_STATE_DIRECTORY} is the Discord plugin's state
 # Programs that walk a whole tree, so naming home or / with them reaches the state directory.
 TREE_WALKERS = {"find", "rg", "ag", "fd", "ditto", "rsync", "tar", "zip", "du", "mdfind", "mdls", "xattr", "pax", "cpio"}
 RECURSIVE_WHEN_FLAGGED = {"grep", "egrep", "fgrep", "cp", "ls", "chmod", "chown"}
-PREFERENCES_COMMAND_PATTERN = re.compile(re.escape(CONFIG["PREFERENCES_COMMAND"]) + r" (get [0-9]{15,21}|set [0-9]{15,21}( (frequency=(updates|quiet)|verbosity=(brief|detailed))){1,2})")
+PREFERENCES_COMMAND_PATTERN = re.compile(re.escape(CONFIG["PREFERENCES_COMMAND"]) + r" (get [0-9]{15,21}|set [0-9]{15,21}( (frequency=(updates|quiet)|verbosity=(brief|detailed)|style=(default|adhd))){1,3})")
 JOB_ID_TEXT = r"[0-9]{6}-[0-9a-f]{6}"
 JOB_ID = re.compile(JOB_ID_TEXT)
 CLEAR_COMMAND_PATTERN = re.compile(re.escape(CONFIG["CLEAR_COMMAND"]) + " " + JOB_ID_TEXT)

@@ -439,6 +439,18 @@
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"{{PREFERENCES_COMMAND}}\" session-start",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash|Read|Grep|Glob|Write|Edit|NotebookEdit|mcp__vm-driver__.*|mcp__cua__.*|mcp__cua-driver__.*|mcp__plugin_discord_discord__.*|Monitor",

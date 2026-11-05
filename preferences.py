@@ -1,7 +1,9 @@
 #!/usr/bin/env python3 -I
-"""Discord requesters' status-update preferences, kept on the Cua Volume so they outlive sessions and VM resets.
+"""Discord requesters' preferences, kept on the Cua Volume so they outlive sessions and VM resets.
   preferences.py get <discord user id>
-  preferences.py set <discord user id> frequency=updates|quiet [verbosity=brief|detailed]   (either or both)
+  preferences.py set <discord user id> [frequency=updates|quiet] [verbosity=brief|detailed] [style=default|adhd]   (at least one)
+  preferences.py session-start   (SessionStart hook: the rulesets for every requester with a non-default style; never fails)
+With style=adhd, get also prints the reply-style ruleset, scoped to that requester.
 The bot may run these (settings.json, guard.py) but not read this file or reach the volume otherwise."""
 import importlib.util
 import json
@@ -10,10 +12,11 @@ import re
 import sys
 import time
 
-CHOICES = {"frequency": ("updates", "quiet"), "verbosity": ("brief", "detailed")}
-DEFAULTS = {"frequency": "updates", "verbosity": "brief"}
+CHOICES = {"frequency": ("updates", "quiet"), "verbosity": ("brief", "detailed"), "style": ("default", "adhd")}
+DEFAULTS = {"frequency": "updates", "verbosity": "brief", "style": "default"}
 USER_ID = re.compile(r"[0-9]{15,21}")
-USAGE = "usage: preferences.py get <user id> | set <user id> frequency=updates|quiet verbosity=brief|detailed"
+USAGE = "usage: preferences.py get <user id> | set <user id> frequency=updates|quiet verbosity=brief|detailed style=default|adhd"
+STYLE_FILES = {"adhd": os.path.join(os.path.dirname(os.path.realpath(__file__)), "styles", "i-have-adhd", "SKILL.md")}
 
 
 def load_config():
@@ -23,8 +26,46 @@ def load_config():
     return module.values()
 
 
+def effective(entry):
+    """Stored values the current CHOICES accept; anything else (a disabled feature, a hand edit) reads as the default and stays stored."""
+    return {key: entry.get(key) if entry.get(key) in CHOICES[key] else DEFAULTS[key] for key in CHOICES}
+
+
 def describe(preferences):
-    return " ".join(f"{key}={preferences.get(key, DEFAULTS[key])}" for key in CHOICES)
+    return " ".join(f"{key}={value}" for key, value in effective(preferences).items())
+
+
+def style_rules(users, style):
+    """The ruleset for a non-default style, without its frontmatter and its session-wide Persistence section."""
+    with open(STYLE_FILES[style]) as handle:
+        text = handle.read()
+    text = re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S)
+    text = re.sub(r"^## Persistence\n.*?(?=^## )", "", text, flags=re.S | re.M).strip()
+    return (f"Reply style {style} for requesters with user_id {', '.join(users)}: the rules below shape every reply to them and to no one else; "
+            f"replies to anyone else keep your default style. The style comes from the open-source i-have-adhd plugin; choosing it says nothing "
+            f"about the requester, so never refer to them as having ADHD. They hold while the choice is saved; "
+            f"\"stop adhd mode\" or \"normal mode\" from one of them means `set <their user_id> style=default`.\n\n{text}")
+
+
+def with_style(line, user, preferences):
+    style = effective(preferences)["style"]
+    return line if style not in STYLE_FILES else f"{line}\n\n{style_rules([user], style)}"
+
+
+def session_start(path, volume):
+    """Context for a new or compacted session; empty when nobody has a non-default style or the store is unavailable."""
+    try:
+        if not os.path.ismount(volume):
+            return ""
+        data = read(path)
+        users = {}
+        for user, entry in sorted(data.items()):
+            style = entry.get("style") if isinstance(entry, dict) and USER_ID.fullmatch(user) else None
+            if style in STYLE_FILES and style in CHOICES["style"]:
+                users.setdefault(style, []).append(user)
+        return "\n\n".join(style_rules(ids, style) for style, ids in sorted(users.items()))
+    except (OSError, ValueError):
+        return ""
 
 
 def read(path):
@@ -65,8 +106,11 @@ def run(arguments, path, volume, now):
     if command == "get":
         if not entry:
             return f"{describe({})} (defaults; nothing saved)", 0
-        return f"{describe(entry)} (saved {time.strftime('%Y-%m-%d', time.localtime(entry.get('updated', 0)))})", 0
-    entry = {key: value for key, value in (entry or {}).items() if key in CHOICES}
+        unchosen = "" if entry.get("style") in CHOICES["style"] else "; style not chosen"
+        updated = entry.get("updated") if isinstance(entry.get("updated"), int) else 0
+        return with_style(f"{describe(entry)} (saved {time.strftime('%Y-%m-%d', time.localtime(updated))}{unchosen})", user, entry), 0
+    # Keys and values this version doesn't know are kept, so a feature disabled and later re-enabled finds its choices.
+    entry = dict(entry or {})
     entry.update(settings, updated=int(now))
     data[user] = entry
     os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -80,6 +124,11 @@ def run(arguments, path, volume, now):
 
 def main():
     config = load_config()
+    if sys.argv[1:] == ["session-start"]:
+        text = session_start(config["PREFERENCES_FILE"], config["CUA_VOLUME"])
+        if text:
+            print(text)
+        return
     line, status = run(sys.argv[1:], config["PREFERENCES_FILE"], config["CUA_VOLUME"], time.time())
     print(line)
     sys.exit(status)
